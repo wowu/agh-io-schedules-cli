@@ -68,7 +68,7 @@ public class Parser {
                     if (lastConference != -1) {
                         schedule.getConferences().add(conference);
                     }
-                    conference = new Conference((int) tmpConference);
+                    conference = new Conference(schedule, (int) tmpConference);
                 }
 
                 dateStart = Optional.ofNullable
