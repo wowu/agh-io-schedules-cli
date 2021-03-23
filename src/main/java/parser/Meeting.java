@@ -1,6 +1,9 @@
 package parser;
 
+import collision.CollisionReason;
+
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @SuppressWarnings("unused")
 public class Meeting {
@@ -94,6 +97,44 @@ public class Meeting {
             return new Meeting(this);
         }
 
+    }
+
+    /***
+     * Two time periods P1 and P2 overlaps if, and only if, at least one of these conditions hold:
+     *
+     * P1 starts between the start and end of P2 (P2.from <= P1.from <= P2.to)
+     * P2 starts between the start and end of P1 (P1.from <= P2.from <= P1.to)
+     */
+    public boolean compareMeeting(Meeting otherMeeting, StringBuilder result) {
+        boolean overlap1 = !otherMeeting.getDateStart().isAfter(dateStart) && !dateStart.isAfter(otherMeeting.getDateEnd());
+        boolean overlap2 = !dateEnd.isAfter(otherMeeting.getDateStart()) && !otherMeeting.getDateStart().isAfter(dateEnd);
+        if (overlap1 || overlap2) {
+            boolean groupOverlap = group.equals(otherMeeting.getGroup());
+            boolean lecturerOverlap = lecturer.equals(otherMeeting.getLecturer());
+            boolean roomOverlap = room.equals(otherMeeting.getRoom());
+            CollisionReason reason = CollisionReason.ROOM;
+
+            if (groupOverlap)
+                reason = CollisionReason.GROUP;
+            else if (lecturerOverlap)
+                reason = CollisionReason.LECTURER;
+
+            if (groupOverlap || lecturerOverlap || roomOverlap) {
+                result.append(String.format("\n%25s ", "-"))
+                        .append(otherMeeting.toString())
+                        .append("[POWÓD: ")
+                        .append(reason.toString()).append("]");
+            }
+            return groupOverlap || lecturerOverlap || roomOverlap;
+        }
+
+        return false;
+    }
+
+    public String toString() {
+        return dateStart.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"))
+                + "-" + dateEnd.format(DateTimeFormatter.ofPattern("HH:mm"))
+                + " - " + subject + " - " + lecturer + " - Sala " + room;
     }
 
     public Conference getConference() {

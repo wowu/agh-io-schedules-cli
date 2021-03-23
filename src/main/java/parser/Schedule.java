@@ -13,7 +13,19 @@ public class Schedule {
         conferences = new ArrayList<>();
     }
 
-    String getFileName() {
+    public boolean compareSchedules(Schedule otherSchedule, StringBuilder result) {
+        boolean noCollisions = true;
+        for (Conference conference : conferences) {
+            for (Conference otherConference : otherSchedule.getConferences()) {
+                if (conference.compareConference(otherConference, result))
+                    noCollisions = false;
+            }
+        }
+
+        return noCollisions;
+    }
+
+    public String getFileName() {
         return fileName;
     }
 
