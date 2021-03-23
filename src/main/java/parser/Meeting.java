@@ -1,43 +1,110 @@
 package parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @SuppressWarnings("unused")
 public class Meeting {
-    private final Integer conference;
-    private final Date dateStart;
-    private final Date dateEnd;
+    private final Conference conference;
+    private final LocalDateTime dateStart;
+    private final LocalDateTime dateEnd;
     private final String subject;
     private final String group;
     private final String lecturer;
-    private final String type;
+    private final MeetingType type;
     private final Integer lengthInHours;
-    private final String format;
+    private final MeetingFormat format;
     private final String room;
 
-    public Meeting(Integer conference, Date dateStart, Date dateEnd, String subject, String group, String lecturer,
-                   String type, Integer lengthInHours, String format, String room) {
-        this.conference = conference;
-        this.dateStart = (Date) dateStart.clone();
-        this.dateEnd = (Date) dateEnd.clone();
-        this.subject = subject;
-        this.group = group;
-        this.lecturer = lecturer;
-        this.type = type;
-        this.lengthInHours = lengthInHours;
-        this.format = format;
-        this.room = room;
+    private Meeting(MeetingBuilder meetingBuilder) {
+        this.conference = meetingBuilder.conference;
+        this.dateStart = meetingBuilder.dateStart;
+        this.dateEnd = meetingBuilder.dateEnd;
+        this.subject = meetingBuilder.subject;
+        this.group = meetingBuilder.group;
+        this.lecturer = meetingBuilder.lecturer;
+        this.type = meetingBuilder.type;
+        this.lengthInHours = meetingBuilder.lengthInHours;
+        this.format = meetingBuilder.format;
+        this.room = meetingBuilder.room;
     }
 
-    public Integer getConference() {
+    public static final class MeetingBuilder {
+        private Conference conference;
+        private LocalDateTime dateStart;
+        private LocalDateTime dateEnd;
+        private String subject;
+        private String group;
+        private String lecturer;
+        private MeetingType type;
+        private Integer lengthInHours;
+        private MeetingFormat format;
+        private String room;
+
+        public MeetingBuilder conference(Conference conference) {
+            this.conference = conference;
+            return this;
+        }
+
+        public MeetingBuilder dateStart(LocalDateTime dateStart) {
+            this.dateStart = dateStart;
+            return this;
+        }
+
+        public MeetingBuilder dateEnd(LocalDateTime dateEnd) {
+            this.dateEnd = dateEnd;
+            return this;
+        }
+
+        public MeetingBuilder subject(String subject) {
+            this.subject = subject;
+            return this;
+        }
+
+        public MeetingBuilder group(String group) {
+            this.group = group;
+            return this;
+        }
+
+        public MeetingBuilder lecturer(String lecturer) {
+            this.lecturer = lecturer;
+            return this;
+        }
+
+        public MeetingBuilder type(String type) {
+            this.type = MeetingType.getTypeFromString(type);
+            return this;
+        }
+
+        public MeetingBuilder lengthInHours(Integer lengthInHours) {
+            this.lengthInHours = lengthInHours;
+            return this;
+        }
+
+        public MeetingBuilder format(String format) {
+            this.format = MeetingFormat.getFormatFromString(format);
+            return this;
+        }
+
+        public MeetingBuilder room(String room) {
+            this.room = room;
+            return this;
+        }
+
+        public Meeting build() {
+            return new Meeting(this);
+        }
+
+    }
+
+    public Conference getConference() {
         return conference;
     }
 
-    public Date getDateStart() {
+    public LocalDateTime getDateStart() {
         return dateStart;
     }
 
-    public Date getDateEnd() {
+    public LocalDateTime getDateEnd() {
         return dateEnd;
     }
 
@@ -53,7 +120,7 @@ public class Meeting {
         return lecturer;
     }
 
-    public String getType() {
+    public MeetingType getType() {
         return type;
     }
 
@@ -61,7 +128,7 @@ public class Meeting {
         return lengthInHours;
     }
 
-    public String getFormat() {
+    public MeetingFormat getFormat() {
         return format;
     }
 
