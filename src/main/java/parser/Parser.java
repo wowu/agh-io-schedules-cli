@@ -7,6 +7,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Optional;
@@ -17,8 +20,8 @@ public class Parser {
 
     private Conference conference;
     private double conferenceNumber;
-    private Date dateStart;
-    private Date dateEnd;
+    private LocalDateTime dateStart;
+    private LocalDateTime dateEnd;
     private String times;
     private String subject;
     private String group;
@@ -33,22 +36,18 @@ public class Parser {
         this.conferenceNumber = -1;
     }
 
-    private void addUnixTimeFromDateAndTime(Date date, String hour, String minutes) {
-        date.setTime((long) (date.getTime() +
-                Integer.parseInt(hour) * 1e3 * 3600L +
-                Integer.parseInt(minutes) * 1e3 * 60L));
+    private LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
+        if (dateToConvert == null)
+            return null;
+
+        return dateToConvert.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
     }
 
-    private void deleteUnixTimeFromDateAndTime(Date date, String hour, String minutes) {
-        date.setTime((long) (date.getTime() -
-                Integer.parseInt(hour) * 1e3 * 3600L -
-                Integer.parseInt(minutes) * 1e3 * 60L));
-    }
-
-    public Schedule parse() {
+    public Schedule parse() throws FileNotFoundException {
         Schedule schedule = new Schedule(filePath);
-        try {
-            FileInputStream inputStream = new FileInputStream(filePath);
+        try (FileInputStream inputStream = new FileInputStream(filePath)) {
             Workbook workbook = new XSSFWorkbook(inputStream);
             Sheet firstSheet = workbook.getSheetAt(0);
             boolean firstRow = true;
@@ -71,10 +70,12 @@ public class Parser {
                     }
                     conference = new Conference((int) tmpConference);
                 }
-                dateStart = Optional.ofNullable(cellIterator.next().getDateCellValue()).orElse(dateStart);
-                dateEnd = (Date) dateStart.clone();
+
+                dateStart = Optional.ofNullable
+                        (convertToLocalDateTimeViaInstant(cellIterator.next().getDateCellValue())).orElse(dateStart);
                 String tmpTimes = cellIterator.next().getStringCellValue();
                 times = tmpTimes.equals("") ? "0.00-23.59" : tmpTimes;
+
                 subject = cellIterator.next().getStringCellValue();
                 group = cellIterator.next().getStringCellValue();
                 lecturer = cellIterator.next().getStringCellValue();
@@ -83,27 +84,31 @@ public class Parser {
                 format = cellIterator.next().getStringCellValue();
                 room = cellIterator.next().getStringCellValue();
 
-                addUnixTimeFromDateAndTime(dateStart,
-                        times.split("-")[0].split("\\.")[0],
-                        times.split("-")[0].split("\\.")[1]);
-                addUnixTimeFromDateAndTime(dateEnd,
-                        times.split("-")[1].split("\\.")[0],
-                        times.split("-")[1].split("\\.")[1]);
+                LocalDateTime meetingStartTime = dateStart
+                        .withHour(Integer.parseInt(times.split("-")[0].split("\\.")[0]))
+                        .withMinute(Integer.parseInt(times.split("-")[0].split("\\.")[1]));
 
-                Meeting newMeeting = new Meeting((int) conferenceNumber, dateStart, dateEnd,
-                        subject, group, lecturer, type, (int) lengthInHours, format, room);
+                LocalDateTime meetingEndTime = dateStart
+                        .withHour(Integer.parseInt(times.split("-")[1].split("\\.")[0]))
+                        .withMinute(Integer.parseInt(times.split("-")[1].split("\\.")[1]));
+
+                Meeting newMeeting = new Meeting.MeetingBuilder()
+                        .conference(conference)
+                        .dateStart(meetingStartTime)
+                        .dateEnd(meetingEndTime)
+                        .subject(subject)
+                        .group(group)
+                        .lecturer(lecturer)
+                        .type(type)
+                        .lengthInHours((int) lengthInHours)
+                        .format(format)
+                        .room(room)
+                        .build();
 
                 conference.getMeetings().add(newMeeting);
 
-                deleteUnixTimeFromDateAndTime(dateStart,
-                        times.split("-")[0].split("\\.")[0],
-                        times.split("-")[0].split("\\.")[1]);
-                deleteUnixTimeFromDateAndTime(dateEnd,
-                        times.split("-")[1].split("\\.")[0],
-                        times.split("-")[1].split("\\.")[1]);
             }
 
-            inputStream.close();
         } catch (IllegalStateException ignored) {
             schedule.getConferences().add(conference);
         } catch (Exception e) {
