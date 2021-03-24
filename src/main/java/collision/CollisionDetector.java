@@ -9,6 +9,7 @@ import java.util.List;
 
 public class CollisionDetector {
     List<Schedule> schedules;
+    final static String dashes = "--------------------";
 
     public CollisionDetector() {
         schedules = new ArrayList<>();
@@ -32,11 +33,11 @@ public class CollisionDetector {
         for (Schedule schedule : schedules) {
             noCollisions = true;
             StringBuilder response =
-                    new StringBuilder("\n-------------------- " + schedule.getFileName() + " --------------------");
+                    new StringBuilder("\n" + dashes + " " + schedule.getFileName() + " " + dashes);
             for (Schedule otherSchedule : schedules) {
                 StringBuilder scheduleResponse = new StringBuilder(String.format("\n%8s", ""))
-                        .append("-------------------- ")
-                        .append(otherSchedule.getFileName()).append(" --------------------");
+                        .append(dashes).append(" ")
+                        .append(otherSchedule.getFileName()).append(" ").append(dashes);
                 result = schedule.compareSchedules(otherSchedule, scheduleResponse);
                 if (!result) {
                     noCollisions = false;

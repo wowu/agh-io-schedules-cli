@@ -1,17 +1,17 @@
 package collision;
 
 public enum CollisionReason {
-    ROOM,
-    LECTURER,
-    GROUP;
+    ROOM("Sala"),
+    LECTURER("Prowadzący"),
+    GROUP("Grupa");
 
-    @Override
+    private final String reason;
+
+    CollisionReason(String reason) {
+        this.reason = reason;
+    }
+
     public String toString() {
-        if (this.equals(ROOM))
-            return "Sala";
-        else if (this.equals(LECTURER))
-            return "Prowadzący";
-        else
-            return "Grupa";
+        return this.reason;
     }
 }
