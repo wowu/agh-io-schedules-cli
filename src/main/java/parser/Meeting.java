@@ -109,23 +109,24 @@ public class Meeting {
         boolean overlap1 = !otherMeeting.getDateStart().isAfter(dateStart) && !dateStart.isAfter(otherMeeting.getDateEnd());
         boolean overlap2 = !dateEnd.isAfter(otherMeeting.getDateStart()) && !otherMeeting.getDateStart().isAfter(dateEnd);
         if (overlap1 || overlap2) {
-            boolean groupOverlap = group.equals(otherMeeting.getGroup());
-            boolean lecturerOverlap = lecturer.equals(otherMeeting.getLecturer());
-            boolean roomOverlap = room.equals(otherMeeting.getRoom());
-            CollisionReason reason = CollisionReason.ROOM;
+            CollisionReason lecturerOverlap = lecturer.equals(otherMeeting.getLecturer()) ? CollisionReason.LECTURER : null;
+            CollisionReason roomOverlap = room.equals(otherMeeting.getRoom()) ? CollisionReason.ROOM : null;
+            CollisionReason groupOverlap = group.equals(otherMeeting.getGroup()) ? CollisionReason.GROUP : null;
+            StringBuilder reasons = new StringBuilder();
 
-            if (groupOverlap)
-                reason = CollisionReason.GROUP;
-            else if (lecturerOverlap)
-                reason = CollisionReason.LECTURER;
+            for (CollisionReason reason : new CollisionReason[]{lecturerOverlap, roomOverlap, groupOverlap}) {
+                if (reason != null)
+                    reasons.append(" ").append(CollisionReason.valueOf(reason.name()));
+            }
 
-            if (groupOverlap || lecturerOverlap || roomOverlap) {
+            if (!reasons.isEmpty()) {
                 result.append(String.format("\n%25s ", "-"))
                         .append(otherMeeting.toString())
-                        .append("[POWÓD: ")
-                        .append(reason.toString()).append("]");
+                        .append("[POWODY:")
+                        .append(reasons).append("]");
             }
-            return groupOverlap || lecturerOverlap || roomOverlap;
+
+            return !reasons.isEmpty();
         }
 
         return false;
