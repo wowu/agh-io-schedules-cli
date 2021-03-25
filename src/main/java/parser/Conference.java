@@ -15,15 +15,17 @@ public class Conference {
         meetings = new ArrayList<>();
     }
 
-    public boolean compareConference(Conference otherConference, StringBuilder result) {
+    public boolean compareConference(Conference otherConference, StringBuilder result, boolean sameSchedule) {
         boolean noCollisions = true;
         for (Meeting meeting : meetings) {
             boolean noCollisionsMeeting = true;
             StringBuilder response =
                     new StringBuilder(String.format("\n%17s %s", "-", meeting.toString()));
             for (Meeting otherMeeting : otherConference.getMeetings()) {
-                if (meeting.compareMeeting(otherMeeting, response)) {
-                    noCollisionsMeeting = false;
+                if (!sameSchedule || !meeting.equals(otherMeeting)) {
+                    if (meeting.compareMeeting(otherMeeting, response)) {
+                        noCollisionsMeeting = false;
+                    }
                 }
             }
             if (!noCollisionsMeeting) {
