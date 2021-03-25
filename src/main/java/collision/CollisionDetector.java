@@ -15,7 +15,7 @@ public class CollisionDetector {
         schedules = new ArrayList<>();
     }
 
-    public void loadSchedules(String... args) throws FileNotFoundException {
+    public void loadSchedules(List<String> args) throws FileNotFoundException {
         for (String arg : args) {
             Schedule newSchedule = new Parser(arg).parse();
             schedules.add(newSchedule);
