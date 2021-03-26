@@ -119,14 +119,14 @@ public class Meeting {
                     reasons.append(" ").append(CollisionReason.valueOf(reason.name()));
             }
 
-            if (!reasons.isEmpty()) {
+            if (reasons.length() != 0) {
                 result.append(String.format("\n%25s ", "-"))
                         .append(otherMeeting.toString())
                         .append("[POWODY:")
                         .append(reasons).append("]");
             }
 
-            return !reasons.isEmpty();
+            return reasons.length() != 0;
         }
 
         return false;
