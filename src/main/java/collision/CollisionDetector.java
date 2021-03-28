@@ -3,9 +3,11 @@ package collision;
 import parser.Parser;
 import parser.Schedule;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CollisionDetector {
     List<Schedule> schedules;
@@ -15,10 +17,19 @@ public class CollisionDetector {
         schedules = new ArrayList<>();
     }
 
-    public void loadSchedules(List<String> args) throws FileNotFoundException {
-        for (String arg : args) {
-            Schedule newSchedule = new Parser(arg).parse();
-            schedules.add(newSchedule);
+    public void loadSchedules(List<File> files) throws FileNotFoundException {
+        for (File file : files) {
+            if (file.isFile()) {
+                Schedule newSchedule = new Parser(file.getName()).parse();
+                schedules.add(newSchedule);
+            } else if (file.isDirectory()) {
+                for (File subfile : Objects.requireNonNull(file.listFiles())) {
+                    Schedule newSchedule = new Parser(subfile.getName()).parse();
+                    schedules.add(newSchedule);
+                }
+            } else {
+                System.out.println("File " + file.getName() + " is not a file or directory!");
+            }
         }
     }
 
