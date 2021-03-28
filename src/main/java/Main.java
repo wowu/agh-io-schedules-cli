@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
         description = "Finds collisions between schedules.")
 public class Main implements Runnable {
 
-    @Parameters(index = "0..*", description = "Files in which the program should look for collisions.")
+    @Parameters(index = "0..*", description = "Files/Directories in which the program should look for collisions.")
     private List<File> files;
 
 
@@ -28,7 +28,7 @@ public class Main implements Runnable {
         else {
             try {
                 CollisionDetector collisionDetector = new CollisionDetector();
-                collisionDetector.loadSchedules(files.stream().map(File::getName).collect(Collectors.toList()));
+                collisionDetector.loadSchedules(files);
                 collisionDetector.compareSchedules();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

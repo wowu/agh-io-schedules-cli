@@ -111,9 +111,12 @@ public class Parser {
 
         } catch (IllegalStateException ignored) {
             schedule.getConferences().add(conference);
+        } catch (FileNotFoundException e) {
+            System.out.println("This file does not exist: " + filePath);
+            System.exit(0);
         } catch (Exception e) {
-            System.out.println("WRONG EXCEL FORMAT FOR FILE: " + filePath);
-            e.printStackTrace();
+            System.out.println("Wrong excel format in file: " + filePath);
+            System.exit(0);
         }
 
         return schedule;
