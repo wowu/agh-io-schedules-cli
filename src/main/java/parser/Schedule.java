@@ -13,11 +13,14 @@ public class Schedule {
         conferences = new ArrayList<>();
     }
 
+    /**
+     * returns true if schedules have no collisions
+     */
     public boolean compareSchedules(Schedule otherSchedule, StringBuilder result, boolean sameSchedule) {
         boolean noCollisions = true;
         for (Conference conference : conferences) {
             for (Conference otherConference : otherSchedule.getConferences()) {
-                if (conference.compareConference(otherConference, result, sameSchedule))
+                if (!conference.compareConference(otherConference, result, sameSchedule))
                     noCollisions = false;
             }
         }

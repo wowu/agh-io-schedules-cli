@@ -104,13 +104,17 @@ public class Meeting {
      *
      * P1 starts between the start and end of P2 (P2.from <= P1.from <= P2.to)
      * P2 starts between the start and end of P1 (P1.from <= P2.from <= P1.to)
+     *
+     * returns true if meetings have no collisions
      */
     public boolean compareMeeting(Meeting otherMeeting, StringBuilder result) {
         boolean overlap1 = !otherMeeting.getDateStart().isAfter(dateStart) && !dateStart.isAfter(otherMeeting.getDateEnd());
         boolean overlap2 = !dateEnd.isAfter(otherMeeting.getDateStart()) && !otherMeeting.getDateStart().isAfter(dateEnd);
         if (overlap1 || overlap2) {
             CollisionReason lecturerOverlap = lecturer.equals(otherMeeting.getLecturer()) ? CollisionReason.LECTURER : null;
-            CollisionReason roomOverlap = room.equals(otherMeeting.getRoom()) ? CollisionReason.ROOM : null;
+            CollisionReason roomOverlap = !(format == MeetingFormat.HOME ||
+                    otherMeeting.getFormat() == MeetingFormat.HOME) &&
+                    room.equals(otherMeeting.getRoom()) ? CollisionReason.ROOM : null;
             CollisionReason groupOverlap = group.equals(otherMeeting.getGroup()) ? CollisionReason.GROUP : null;
             StringBuilder reasons = new StringBuilder();
 
@@ -126,10 +130,10 @@ public class Meeting {
                         .append(reasons).append("]");
             }
 
-            return reasons.length() != 0;
+            return reasons.length() == 0;
         }
 
-        return false;
+        return true;
     }
 
     public String toString() {

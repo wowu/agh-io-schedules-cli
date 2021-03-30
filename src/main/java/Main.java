@@ -8,7 +8,6 @@ import picocli.CommandLine.Spec;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Command(name = "java -jar <jar_file>", mixinStandardHelpOptions = true, version = "collisionDetector 1.0",
         description = "Finds collisions between schedules.")
