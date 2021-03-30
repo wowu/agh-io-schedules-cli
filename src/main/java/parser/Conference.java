@@ -15,6 +15,9 @@ public class Conference {
         meetings = new ArrayList<>();
     }
 
+    /**
+     * returns true if conferences have no collisions
+     */
     public boolean compareConference(Conference otherConference, StringBuilder result, boolean sameSchedule) {
         boolean noCollisions = true;
         for (Meeting meeting : meetings) {
@@ -23,7 +26,7 @@ public class Conference {
                     new StringBuilder(String.format("\n%17s %s", "-", meeting.toString()));
             for (Meeting otherMeeting : otherConference.getMeetings()) {
                 if (!sameSchedule || !meeting.equals(otherMeeting)) {
-                    if (meeting.compareMeeting(otherMeeting, response)) {
+                    if (!meeting.compareMeeting(otherMeeting, response)) {
                         noCollisionsMeeting = false;
                     }
                 }
