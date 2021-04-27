@@ -12,7 +12,8 @@ public class Meeting {
     private final LocalDateTime dateEnd;
     private final String subject;
     private final String group;
-    private final String lecturer;
+    private final String lecturerName;
+    private final String lecturerSurname;
     private final MeetingType type;
     private final Integer lengthInHours;
     private final MeetingFormat format;
@@ -24,7 +25,8 @@ public class Meeting {
         this.dateEnd = meetingBuilder.dateEnd;
         this.subject = meetingBuilder.subject;
         this.group = meetingBuilder.group;
-        this.lecturer = meetingBuilder.lecturer;
+        this.lecturerName = meetingBuilder.lecturerName;
+        this.lecturerSurname = meetingBuilder.lecturerSurname;
         this.type = meetingBuilder.type;
         this.lengthInHours = meetingBuilder.lengthInHours;
         this.format = meetingBuilder.format;
@@ -37,7 +39,8 @@ public class Meeting {
         private LocalDateTime dateEnd;
         private String subject;
         private String group;
-        private String lecturer;
+        private String lecturerName;
+        private String lecturerSurname;
         private MeetingType type;
         private Integer lengthInHours;
         private MeetingFormat format;
@@ -68,8 +71,13 @@ public class Meeting {
             return this;
         }
 
-        public MeetingBuilder lecturer(String lecturer) {
-            this.lecturer = lecturer;
+        public MeetingBuilder lecturerName(String lecturerName) {
+            this.lecturerName = lecturerName;
+            return this;
+        }
+
+        public MeetingBuilder lecturerSurname(String lecturerSurname) {
+            this.lecturerSurname = lecturerSurname;
             return this;
         }
 
@@ -109,9 +117,10 @@ public class Meeting {
      */
     public boolean compareMeeting(Meeting otherMeeting, StringBuilder result) {
         boolean overlap1 = !otherMeeting.getDateStart().isAfter(dateStart) && !dateStart.isAfter(otherMeeting.getDateEnd());
-        boolean overlap2 = !dateEnd.isAfter(otherMeeting.getDateStart()) && !otherMeeting.getDateStart().isAfter(dateEnd);
+        boolean overlap2 = !dateStart.isAfter(otherMeeting.getDateStart()) && !otherMeeting.getDateStart().isAfter(dateEnd);
         if (overlap1 || overlap2) {
-            CollisionReason lecturerOverlap = lecturer.equals(otherMeeting.getLecturer()) ? CollisionReason.LECTURER : null;
+            CollisionReason lecturerOverlap = lecturerName.equals(otherMeeting.getLecturerName()) &&
+                    lecturerSurname.equals(otherMeeting.getLecturerSurname()) ? CollisionReason.LECTURER : null;
             CollisionReason roomOverlap = !(format == MeetingFormat.HOME ||
                     otherMeeting.getFormat() == MeetingFormat.HOME) &&
                     room.equals(otherMeeting.getRoom()) ? CollisionReason.ROOM : null;
@@ -126,7 +135,7 @@ public class Meeting {
             if (reasons.length() != 0) {
                 result.append(String.format("\n%25s ", "-"))
                         .append(otherMeeting.toString())
-                        .append("[POWODY:")
+                        .append(" [Reasons:")
                         .append(reasons).append("]");
             }
 
@@ -139,7 +148,7 @@ public class Meeting {
     public String toString() {
         return dateStart.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"))
                 + "-" + dateEnd.format(DateTimeFormatter.ofPattern("HH:mm"))
-                + " - " + subject + " - " + lecturer + " - Sala " + room;
+                + " - " + subject + " - " + lecturerName + " " + lecturerSurname + " - Room " + room;
     }
 
     public Conference getConference() {
@@ -162,8 +171,12 @@ public class Meeting {
         return group;
     }
 
-    public String getLecturer() {
-        return lecturer;
+    public String getLecturerName() {
+        return lecturerName;
+    }
+
+    public String getLecturerSurname() {
+        return lecturerSurname;
     }
 
     public MeetingType getType() {
