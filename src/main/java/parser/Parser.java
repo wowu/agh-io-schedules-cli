@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @SuppressWarnings("all")
@@ -92,25 +93,33 @@ public class Parser {
                         .withHour(Integer.parseInt(times.split("-")[1].split("\\.")[0]))
                         .withMinute(Integer.parseInt(times.split("-")[1].split("\\.")[1]));
 
+                String[] lecturerSplited = lecturer.split(" ");
+                if (lecturerSplited.length < 2)
+                    lecturerSplited = new String[]{"", ""};
+
                 Meeting newMeeting = new Meeting.MeetingBuilder()
                         .conference(conference)
                         .dateStart(meetingStartTime)
                         .dateEnd(meetingEndTime)
                         .subject(subject)
                         .group(group)
-                        .lecturer(lecturer)
+                        .lecturerName(lecturerSplited[0])
+                        .lecturerSurname(lecturerSplited[1])
                         .type(type)
                         .lengthInHours((int) lengthInHours)
                         .format(format)
                         .room(room)
                         .build();
 
-                conference.getMeetings().add(newMeeting);
-
+                if (!newMeeting.getSubject().equals(""))
+                    conference.getMeetings().add(newMeeting);
             }
 
         } catch (IllegalStateException ignored) {
             schedule.getConferences().add(conference);
+        } catch (NoSuchElementException ignored) {
+            schedule.getConferences().add(conference);
+            return schedule;
         } catch (FileNotFoundException e) {
             System.out.println("This file does not exist: " + filePath);
             System.exit(0);
