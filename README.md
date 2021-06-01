@@ -24,9 +24,21 @@ grupa laboratoryjna uczestniczy w więcej niż jednym wydarzeniu lub sala jest z
 Harmonogramy wejściowe muszą spełniać konkretne założenia. Przyjęliśmy, że tylko takie harmonogramy zostaną 
 zaakceptowane przez program dzięki czemu zawsze jesteśmy w stanie przewidzieć zachowanie programu. Format wejściowy
 widoczny jest w przykładowych harmonogramach.
+# Przykład działania aplikacji
+W repozytorium znajduje się archiwum JAR ze spakowaną aplikacją (agh-io-schedules-cli.jar).  
+Przykładowe wywołania aplikacji:  
+- java -jar agh-io-schedules-cli.jar (instrukcja obsługi)
+- java -jar agh-io-schedules-cli.jar 1_schedule_all_remote_no_conflicts.xlsx
+- java -jar agh-io-schedules-cli.jar 2_schedule_all_remote_with_lecturer_conflicts.xlsx  5_schedule_all_university_with_multiple_conflicts.xlsx 
+- java -jar agh-io-schedules-cli.jar schedules_recursive_folders
+- java -jar agh-io-schedules-cli.jar 1_schedule_all_remote_no_conflicts.xlsx schedules_conflicts
+
 # Przykładowe harmonogramy
 [1. Harmonogram bez wewnętrznych konfliktów](1_schedule_all_remote_no_conflicts.xlsx)  
 [2. Harmonogram z wewnętrznymi konfliktami](5_schedule_all_university_with_multiple_conflicts.xlsx)  
 [3. Harmonogram bez wewnętrznych konfliktów, lecz z konfliktami z harmonogramem 1](7_schedule_all_university_with_no_conflicts_with_1_but_with_6.xlsx)
 # Implementacja
-Aplikacja konsolowa została napisana w języku Java (wersja JDK 11).
+Aplikacja konsolowa została napisana w języku Java (wersja JDK 11).  
+Aplikacja wypisuje ostrzeżenie o nielegalnym dostępie - wynika to z przestarzałego pakietu,
+który przestał być wspierany w Java 8. Taki komunikat można ukryć przy pomocy opcji VM:
+--illegal-access=deny.

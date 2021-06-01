@@ -6,7 +6,6 @@ import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Spec;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class Main implements Runnable {
                 CollisionDetector collisionDetector = new CollisionDetector();
                 collisionDetector.loadSchedules(files);
                 collisionDetector.compareSchedules();
-            } catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
