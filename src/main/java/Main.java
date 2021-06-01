@@ -7,6 +7,7 @@ import picocli.CommandLine.Spec;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 @Command(name = "java -jar <jar_file>", mixinStandardHelpOptions = true, version = "collisionDetector 1.0",
@@ -29,7 +30,7 @@ public class Main implements Runnable {
                 CollisionDetector collisionDetector = new CollisionDetector();
                 collisionDetector.loadSchedules(files);
                 collisionDetector.compareSchedules();
-            } catch (FileNotFoundException e) {
+            } catch (IOException e){
                 e.printStackTrace();
             }
         }

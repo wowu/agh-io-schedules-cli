@@ -9,7 +9,7 @@ public class Schedule {
     private final List<Conference> conferences;
 
     public Schedule(String fileName) {
-        this.fileName = fileName;
+        this.fileName = fileName.contains("\\") ? fileName.substring(fileName.lastIndexOf('\\') + 1) : fileName;
         conferences = new ArrayList<>();
     }
 

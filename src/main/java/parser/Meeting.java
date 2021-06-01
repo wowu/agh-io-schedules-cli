@@ -134,8 +134,8 @@ public class Meeting {
 
             if (reasons.length() != 0) {
                 result.append(String.format("\n%25s ", "-"))
-                        .append(otherMeeting.toString())
-                        .append(" [Reasons:")
+                        .append(otherMeeting)
+                        .append(" [Powody:")
                         .append(reasons).append("]");
             }
 
@@ -148,7 +148,7 @@ public class Meeting {
     public String toString() {
         return dateStart.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"))
                 + "-" + dateEnd.format(DateTimeFormatter.ofPattern("HH:mm"))
-                + " - " + subject + " - " + lecturerName + " " + lecturerSurname + " - Room " + room;
+                + " - " + subject + " - " + lecturerName + " " + lecturerSurname + " - Sala " + room;
     }
 
     public Conference getConference() {

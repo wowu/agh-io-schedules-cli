@@ -5,9 +5,11 @@ import parser.Schedule;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class CollisionDetector {
     List<Schedule> schedules;
@@ -17,16 +19,22 @@ public class CollisionDetector {
         schedules = new ArrayList<>();
     }
 
-    public void loadSchedules(List<File> files) throws FileNotFoundException {
+    public void loadSchedules(List<File> files) throws IOException {
         for (File file : files) {
             if (file.isFile()) {
                 Schedule newSchedule = new Parser(file.getName()).parse();
                 schedules.add(newSchedule);
             } else if (file.isDirectory()) {
-                for (File subfile : Objects.requireNonNull(file.listFiles())) {
-                    Schedule newSchedule = new Parser(subfile.getName()).parse();
-                    schedules.add(newSchedule);
-                }
+                Files.walk(Paths.get(file.getAbsolutePath()))
+                        .filter(Files::isRegularFile)
+                        .forEach(path -> {
+                            try {
+                                schedules.add(new Parser(path.toString()).parse());
+                            } catch (FileNotFoundException e) {
+                                System.out.println("ERROR");
+                                e.printStackTrace();
+                            }
+                        });
             } else {
                 System.out.println("File " + file.getName() + " is not a file or directory!");
             }
